@@ -1,0 +1,965 @@
+Final Microservices Architecture for Train Management System
+Service Overview
+1. Service Registry (Eureka Server)
+2. API Gateway Service
+3. Authentication & User Management Service
+4. Train Management Service
+5. Booking & Ticketing Service
+6. Food & Pantry Service
+7. Customer Support & Complaint Service
+
+1. Service Registry (Eureka Server)
+eureka-server/
+├── src/main/java/com/trainms/eureka/
+│   └── EurekaServerApplication.java
+├── src/main/resources/
+│   └── application.yml
+└── pom.xml
+EurekaServerApplication.java
+java@SpringBootApplication
+@EnableEurekaServer
+public class EurekaServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(EurekaServerApplication.class, args);
+    }
+}
+application.yml
+yamlserver:
+  port: 8761
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+2. API Gateway Service
+api-gateway/
+├── src/main/java/com/trainms/gateway/
+│   ├── ApiGatewayApplication.java
+│   ├── config/
+│   │   ├── GatewayConfig.java
+│   │   └── CorsConfig.java
+│   └── filter/
+│       ├── AuthenticationFilter.java
+│       └── LoggingFilter.java
+├── src/main/resources/
+│   └── application.yml
+└── pom.xml
+Instructions:
+
+ApiGatewayApplication.java: Main class with @SpringBootApplication and @EnableEurekaClient
+GatewayConfig.java: Configure routes to all microservices
+CorsConfig.java: Configure CORS settings for Angular frontend
+AuthenticationFilter.java: JWT token validation before routing requests
+LoggingFilter.java: Log all incoming requests for monitoring
+Port: 8080
+
+
+3. Authentication & User Management Service
+auth-user-service/
+├── src/main/java/com/trainms/authuser/
+│   ├── AuthUserServiceApplication.java
+│   ├── controller/
+│   │   ├── AuthController.java
+│   │   ├── AdminController.java
+│   │   ├── ProfileController.java
+│   │   ├── UserDashboardController.java
+│   │   └── PassengerController.java
+│   ├── service/
+│   │   ├── AuthService.java
+│   │   ├── UserService.java
+│   │   ├── AdminService.java
+│   │   ├── ProfileService.java
+│   │   ├── PassengerService.java
+│   │   └── EmailValidationService.java
+│   ├── repository/
+│   │   ├── CustomerRepository.java
+│   │   ├── LoginRepository.java
+│   │   └── PassengerDetailsRepository.java
+│   ├── model/
+│   │   ├── Customer.java
+│   │   ├── Login.java
+│   │   ├── PassengerDetails.java
+│   │   └── UserType.java
+│   ├── dto/
+│   │   ├── UserRegistrationDTO.java
+│   │   ├── AdminRegistrationDTO.java
+│   │   ├── LoginDTO.java
+│   │   ├── UserProfileDTO.java
+│   │   └── PassengerDetailsDTO.java
+│   ├── exception/
+│   │   ├── EmailFormatException.java
+│   │   ├── UserAlreadyExistsException.java
+│   │   ├── PassengerNotFoundException.java
+│   │   └── GlobalExceptionHandler.java
+│   ├── config/
+│   │   ├── DatabaseConfig.java
+│   │   └── JwtConfig.java
+│   └── util/
+│       ├── JwtUtil.java
+│       └── EmailValidator.java
+├── src/main/resources/
+│   ├── application.yml
+│   └── schema.sql
+└── pom.xml
+Database Entities:
+Customer.java
+java@Entity
+@Table(name = "customer")
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long customerId;
+    
+    @Column(nullable = false)
+    private String name;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false)
+    private String contactNumber;
+    
+    @Column(nullable = false)
+    private String address;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    // Constructors, getters, setters
+}
+Login.java
+java@Entity
+@Table(name = "login")
+public class Login {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long loginId;
+    
+    @Column(nullable = false, unique = true)
+    private String email;
+    
+    @Column(nullable = false)
+    private String password;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType userType;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.ACTIVE;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    // Constructors, getters, setters
+}
+PassengerDetails.java
+java@Entity
+@Table(name = "passenger_details")
+public class PassengerDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long passengerId;
+    
+    @Column(nullable = false)
+    private Long customerId;
+    
+    @Column(nullable = false)
+    private String fullName;
+    
+    @Column(nullable = false)
+    private Integer age;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+    
+    @Column
+    private String idProofType;
+    
+    @Column
+    private String idProofNumber;
+    
+    @Column
+    private String nationality;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    // Constructors, getters, setters
+}
+UserType.java (Enum)
+javapublic enum UserType {
+    CUSTOMER, ADMIN
+}
+
+public enum Status {
+    ACTIVE, INACTIVE
+}
+
+public enum Gender {
+    MALE, FEMALE, OTHER
+}
+API Endpoints:
+
+POST /api/register - Customer registration
+POST /api/admin/register - Admin registration
+POST /api/login - User authentication
+GET /api/profile - Get user profile
+PUT /api/profile - Update user profile
+GET /api/history - Get booking history
+GET /api/journey - Get upcoming journeys
+POST /api/passenger_details - Add passenger details
+GET /api/passenger_details - Get passenger details
+PUT /api/passenger_details/{id} - Update passenger details
+DELETE /api/passenger_details/{id} - Delete passenger details
+
+Port: 8081
+
+4. Train Management Service
+train-service/
+├── src/main/java/com/trainms/train/
+│   ├── TrainServiceApplication.java
+│   ├── controller/
+│   │   ├── TrainController.java
+│   │   ├── AdminTrainController.java
+│   │   └── ScheduleController.java
+│   ├── service/
+│   │   ├── TrainService.java
+│   │   ├── ScheduleService.java
+│   │   ├── RouteService.java
+│   │   ├── BulkUploadService.java
+│   │   └── CsvParsingService.java
+│   ├── repository/
+│   │   ├── TrainRepository.java
+│   │   ├── RouteRepository.java
+│   │   ├── ScheduleRepository.java
+│   │   └── StationRepository.java
+│   ├── model/
+│   │   ├── Train.java
+│   │   ├── Route.java
+│   │   ├── Schedule.java
+│   │   └── Station.java
+│   ├── dto/
+│   │   ├── TrainDTO.java
+│   │   ├── ScheduleDTO.java
+│   │   ├── RouteDTO.java
+│   │   └── BulkUploadResponseDTO.java
+│   ├── exception/
+│   │   ├── TrainNotFoundException.java
+│   │   ├── InvalidCsvFormatException.java
+│   │   ├── ScheduleConflictException.java
+│   │   └── GlobalExceptionHandler.java
+│   └── util/
+│       ├── CsvValidator.java
+│       └── ScheduleValidator.java
+├── src/main/resources/
+│   ├── application.yml
+│   └── schema.sql
+└── pom.xml
+Database Entities:
+Train.java
+java@Entity
+@Table(name = "trains")
+public class Train {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long trainId;
+    
+    @Column(nullable = false, unique = true)
+    private String trainNumber;
+    
+    @Column(nullable = false)
+    private String trainName;
+    
+    @Column(nullable = false)
+    private String trainType;
+    
+    @Column(nullable = false)
+    private Integer totalSeats;
+    
+    @Column(nullable = false)
+    private Integer acSeats;
+    
+    @Column(nullable = false)
+    private Integer sleeperSeats;
+    
+    @Column(nullable = false)
+    private Integer generalSeats;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TrainStatus status = TrainStatus.ACTIVE;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    // Constructors, getters, setters
+}
+Station.java
+java@Entity
+@Table(name = "stations")
+public class Station {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long stationId;
+    
+    @Column(nullable = false, unique = true)
+    private String stationCode;
+    
+    @Column(nullable = false)
+    private String stationName;
+    
+    @Column(nullable = false)
+    private String city;
+    
+    @Column(nullable = false)
+    private String state;
+    
+    @Column
+    private String zone;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StationStatus status = StationStatus.ACTIVE;
+    
+    // Constructors, getters, setters
+}
+Route.java
+java@Entity
+@Table(name = "routes")
+public class Route {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long routeId;
+    
+    @Column(nullable = false)
+    private Long trainId;
+    
+    @Column(nullable = false)
+    private Long fromStationId;
+    
+    @Column(nullable = false)
+    private Long toStationId;
+    
+    @Column(nullable = false)
+    private Integer distance;
+    
+    @Column(nullable = false)
+    private Integer sequenceNumber;
+    
+    @Column(nullable = false)
+    private LocalTime arrivalTime;
+    
+    @Column(nullable = false)
+    private LocalTime departureTime;
+    
+    @Column(nullable = false)
+    private Integer stopDuration; // in minutes
+    
+    @Column(nullable = false)
+    private BigDecimal acFare;
+    
+    @Column(nullable = false)
+    private BigDecimal sleeperFare;
+    
+    @Column(nullable = false)
+    private BigDecimal generalFare;
+    
+    // Constructors, getters, setters
+}
+Schedule.java
+java@Entity
+@Table(name = "schedules")
+public class Schedule {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long scheduleId;
+    
+    @Column(nullable = false)
+    private Long trainId;
+    
+    @Column(nullable = false)
+    private LocalDate travelDate;
+    
+    @Column(nullable = false)
+    private Integer availableAcSeats;
+    
+    @Column(nullable = false)
+    private Integer availableSleeperSeats;
+    
+    @Column(nullable = false)
+    private Integer availableGeneralSeats;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ScheduleStatus status = ScheduleStatus.SCHEDULED;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    // Constructors, getters, setters
+}
+Enums
+javapublic enum TrainStatus {
+    ACTIVE, INACTIVE, MAINTENANCE
+}
+
+public enum StationStatus {
+    ACTIVE, INACTIVE
+}
+
+public enum ScheduleStatus {
+    SCHEDULED, DEPARTED, CANCELLED, DELAYED
+}
+API Endpoints:
+
+GET /api/trains - Get all available trains
+GET /api/trains/search - Search trains by route and date
+GET /api/trains/{trainId} - Get train details
+POST /api/admin/trains - Add new train
+PUT /api/admin/trains/{trainId} - Update train details
+DELETE /api/admin/trains/{trainId} - Delete train
+POST /api/admin/active_trains/upload - Bulk upload train schedules
+GET /api/schedule/{trainId}/{date} - Get train schedule for specific date
+POST /api/admin/schedule - Create schedule
+PUT /api/admin/schedule/{scheduleId} - Update schedule
+
+Port: 8082
+
+5. Booking & Ticketing Service
+booking-ticketing-service/
+├── src/main/java/com/trainms/booking/
+│   ├── BookingServiceApplication.java
+│   ├── controller/
+│   │   ├── BookingController.java
+│   │   ├── SeatController.java
+│   │   ├── TicketController.java
+│   │   ├── BookingStatusController.java
+│   │   └── PaymentController.java
+│   ├── service/
+│   │   ├── BookingService.java
+│   │   ├── SeatReservationService.java
+│   │   ├── SeatAllotmentService.java
+│   │   ├── TicketService.java
+│   │   └── PaymentService.java
+│   ├── repository/
+│   │   ├── BookingRepository.java
+│   │   ├── SeatRepository.java
+│   │   ├── TicketRepository.java
+│   │   └── PaymentRepository.java
+│   ├── model/
+│   │   ├── Booking.java
+│   │   ├── Seat.java
+│   │   ├── Ticket.java
+│   │   └── Payment.java
+│   ├── dto/
+│   │   ├── BookingRequestDTO.java
+│   │   ├── SeatSelectionDTO.java
+│   │   ├── TicketDTO.java
+│   │   └── PaymentDTO.java
+│   ├── exception/
+│   │   ├── SeatNotAvailableException.java
+│   │   ├── BookingNotFoundException.java
+│   │   ├── PaymentFailedException.java
+│   │   └── GlobalExceptionHandler.java
+│   ├── util/
+│   │   └── SeatAllocationUtil.java
+│   └── client/
+│       ├── AuthUserServiceClient.java
+│       └── TrainServiceClient.java
+├── src/main/resources/
+│   ├── application.yml
+│   └── schema.sql
+└── pom.xml
+Database Entities:
+Booking.java
+java@Entity
+@Table(name = "bookings")
+public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookingId;
+    
+    @Column(nullable = false, unique = true)
+    private String pnr;
+    
+    @Column(nullable = false)
+    private Long customerId;
+    
+    @Column(nullable = false)
+    private Long trainId;
+    
+    @Column(nullable = false)
+    private Long fromStationId;
+    
+    @Column(nullable = false)
+    private Long toStationId;
+    
+    @Column(nullable = false)
+    private LocalDate travelDate;
+    
+    @Column(nullable = false)
+    private LocalTime departureTime;
+    
+    @Column(nullable = false)
+    private LocalTime arrivalTime;
+    
+    @Column(nullable = false)
+    private Integer totalPassengers;
+    
+    @Column(nullable = false)
+    private BigDecimal totalAmount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookingStatus status = BookingStatus.CONFIRMED;
+    
+    @Column(nullable = false)
+    private LocalDateTime bookingDate;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    // Constructors, getters, setters
+}
+Seat.java
+java@Entity
+@Table(name = "seats")
+public class Seat {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seatId;
+    
+    @Column(nullable = false)
+    private Long bookingId;
+    
+    @Column(nullable = false)
+    private Long passengerId;
+    
+    @Column(nullable = false)
+    private String seatNumber;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SeatType seatType;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SeatClass seatClass;
+    
+    @Column(nullable = false)
+    private BigDecimal fare;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SeatStatus status = SeatStatus.CONFIRMED;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    // Constructors, getters, setters
+}
+Ticket.java
+java@Entity
+@Table(name = "tickets")
+public class Ticket {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long ticketId;
+    
+    @Column(nullable = false)
+    private Long bookingId;
+    
+    @Column(nullable = false)
+    private Long passengerId;
+    
+    @Column(nullable = false)
+    private LocalDate startDate;
+    
+    @Column(nullable = false)
+    private LocalDate endDate;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TicketStatus status = TicketStatus.ACTIVE;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    // Constructors, getters, setters
+}
+Payment.java
+java@Entity
+@Table(name = "payments")
+public class Payment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long paymentId;
+    
+    @Column(nullable = false)
+    private Long bookingId;
+    
+    @Column(nullable = false, unique = true)
+    private String transactionId;
+    
+    @Column(nullable = false)
+    private BigDecimal amount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status = PaymentStatus.PENDING;
+    
+    @Column(nullable = false)
+    private LocalDateTime paymentDate;
+    
+    @Column
+    private String gatewayResponse;
+    
+    // Constructors, getters, setters
+}
+Enums
+javapublic enum BookingStatus {
+    CONFIRMED, CANCELLED, COMPLETED, REFUNDED
+}
+
+public enum SeatType {
+    LOWER, MIDDLE, UPPER, SIDE_LOWER, SIDE_UPPER
+}
+
+public enum SeatClass {
+    AC_1, AC_2, AC_3, SLEEPER, GENERAL
+}
+
+public enum SeatStatus {
+    CONFIRMED, CANCELLED, WAITING
+}
+
+public enum TicketStatus {
+    ACTIVE, CANCELLED, EXPIRED, COMPLETED
+}
+
+public enum PaymentMethod {
+    CREDIT_CARD, DEBIT_CARD, UPI, NET_BANKING, WALLET
+}
+
+public enum PaymentStatus {
+    PENDING, SUCCESS, FAILED, REFUNDED
+}
+API Endpoints:
+
+POST /api/booking - Create new booking
+GET /api/booking/{bookingId} - Get booking details
+PUT /api/booking/{bookingId}/cancel - Cancel booking
+GET /api/seats/{trainId}/{date} - Get available seats
+POST /api/seats/reserve - Reserve seats
+GET /api/booking_status/{pnr} - Get booking status
+GET /api/fetch_ticket_details/{ticketId} - Get ticket details
+POST /api/payment - Process payment
+GET /api/payment/status/{transactionId} - Get payment status
+
+Port: 8083
+
+6. Food & Pantry Service
+food-pantry-service/
+├── src/main/java/com/trainms/food/
+│   ├── FoodServiceApplication.java
+│   ├── controller/
+│   │   ├── FoodMenuController.java
+│   │   ├── FoodOrderController.java
+│   │   └── AdminFoodController.java
+│   ├── service/
+│   │   ├── FoodMenuService.java
+│   │   ├── FoodOrderService.java
+│   │   ├── PantryService.java
+│   │   └── FoodInventoryService.java
+│   ├── repository/
+│   │   ├── FoodItemRepository.java
+│   │   ├── FoodOrderRepository.java
+│   │   ├── PantryRepository.java
+│   │   └── FoodInventoryRepository.java
+│   ├── model/
+│   │   ├── FoodItem.java
+│   │   ├── FoodOrder.java
+│   │   ├── FoodOrderItem.java
+│   │   ├── Pantry.java
+│   │   └── FoodInventory.java
+│   ├── dto/
+│   │   ├── FoodItemDTO.java
+│   │   ├── FoodOrderDTO.java
+│   │   ├── FoodCartDTO.java
+│   │   └── FoodInventoryDTO.java
+│   ├── exception/
+│   │   ├── FoodItemNotFoundException.java
+│   │   ├── FoodOutOfStockException.java
+│   │   ├── InvalidOrderException.java
+│   │   └── GlobalExceptionHandler.java
+│   └── client/
+│       └── BookingServiceClient.java
+├── src/main/resources/
+│   ├── application.yml
+│   └── schema.sql
+└── pom.xml
+Database Entities:
+FoodItem.java
+java@Entity
+@Table(name = "food_items")
+public class FoodItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long foodItemId;
+    
+    @Column(nullable = false)
+    private String itemName;
+    
+    @Column(nullable = false)
+    private String description;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FoodCategory category;
+    
+    @Column(nullable = false)
+    private BigDecimal price;
+    
+    @Column
+    private String imageUrl;
+    
+    @Column(nullable = false)
+    private Boolean isVegetarian;
+    
+    @Column(nullable = false)
+    private Boolean isAvailable = true;
+    
+    @Column(nullable = false)
+    private Integer preparationTime; // in minutes
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+    
+    // Constructors, getters, setters
+}
+FoodOrder.java
+java@Entity
+@Table(name = "food_orders")
+public class FoodOrder {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderId;
+    
+    @Column(nullable = false, unique = true)
+    private String orderNumber;
+    
+    @Column(nullable = false)
+    private Long customerId;
+    
+    @Column(nullable = false)
+    private String pnr;
+    
+    @Column(nullable = false)
+    private String seatNumber;
+    
+    @Column(nullable = false)
+    private Long trainId;
+    
+    @Column(nullable = false)
+    private BigDecimal totalAmount;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status = OrderStatus.PLACED;
+    
+    @Column(nullable = false)
+    private LocalDateTime orderTime;
+    
+    @Column
+    private LocalDateTime deliveryTime;
+    
+    @Column
+    private String specialInstructions;
+    
+    // Constructors, getters, setters
+}
+FoodOrderItem.java
+java@Entity
+@Table(name = "food_order_items")
+public class FoodOrderItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderItemId;
+    
+    @Column(nullable = false)
+    private Long orderId;
+    
+    @Column(nullable = false)
+    private Long foodItemId;
+    
+    @Column(nullable = false)
+    private Integer quantity;
+    
+    @Column(nullable = false)
+    private BigDecimal unitPrice;
+    
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+    
+    @Column
+    private String customization;
+    
+    // Constructors, getters, setters
+}
+Pantry.java
+java@Entity
+@Table(name = "pantry")
+public class Pantry {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long pantryId;
+    
+    @Column(nullable = false)
+    private Long trainId;
+    
+    @Column(nullable = false)
+    private String pantryName;
+    
+    @Column(nullable = false)
+    private String contactNumber;
+    
+    @Column(nullable = false)
+    private Boolean isActive = true;
+    
+    @Column(nullable = false)
+    private LocalTime serviceStartTime;
+    
+    @Column(nullable = false)
+    private LocalTime serviceEndTime;
+    
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    // Constructors, getters, setters
+}
+FoodInventory.java
+java@Entity
+@Table(name = "food_inventory")
+public class FoodInventory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long inventoryId;
+    
+    @Column(nullable = false)
+    private Long pantryId;
+    
+    @Column(nullable = false)
+    private Long foodItemId;
+    
+    @Column(nullable = false)
+    private Integer availableQuantity;
+    
+    @Column(nullable = false)
+    private LocalDate inventoryDate;
+    
+    @Column(nullable = false)
+    private LocalDateTime lastUpdated;
+    
+    // Constructors, getters, setters
+}
+Enums
+javapublic enum FoodCategory {
+    BREAKFAST, LUNCH, DINNER, SNACKS, BEVERAGES, DESSERTS
+}
+
+public enum OrderStatus {
+    PLACED, CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED
+}
+API Endpoints:
+
+GET /api/food_cart - Get available food items
+GET /api/food_cart/{trainId} - Get food items for specific train
+POST /api/food_order - Place food order
+GET /api/food_order/{orderId} - Get order details
+PUT /api/food_order/{orderId}/cancel - Cancel food order
+GET /api/food_order/customer/{customerId} - Get customer's food orders
+POST /api/admin/food_items - Add new food item
+PUT /api/admin/food_items/{itemId} - Update food item
+DELETE /api/admin/food_items/{itemId} - Delete food item
+POST /api/admin/pantry - Add pantry
+PUT /api/admin/inventory - Update food inventory
+
+Port: 8084
+
+7. Customer Support & Complaint Service
+support-complaint-service/
+├── src/main/java/com/trainms/support/
+│   ├── SupportServiceApplication.java
+│   ├── controller/
+│   │   ├── AccountSupportController.java
+│   │   ├── ComplaintController.java
+│   │   ├── InquiryController.java
+│   │   └── AdminSupportController.java
+│   ├── service/
+│   │   ├── AccountActivationService.java
+│   │   ├── ComplaintService.java
+│   │   ├── InquiryService.java
+│   │   ├── SupportTicketService.java
+│   │   └── SupportAssignmentService.java
+│   ├── repository/
+│   │   ├── ComplaintRepository.java
+│   │   ├── InquiryRepository.java
+│   │   ├── SupportTicketRepository.java
+│   │   └── SupportAgentRepository.java
+│   ├── model/
+│   │   ├── Complaint.java
+│   │   ├── Inquiry.java
+│   │   ├── SupportTicket.java
+│   │   └── SupportAgent.java
+│   ├── dto/
+│   │   ├── ComplaintDTO.java
+│   │   ├── InquiryDTO.java
+│   │   ├── SupportTicketDTO.java
+│   │   ├── ActivationRequestDTO.java
+│   │   └── SupportResponseDTO.java
+│   ├── exception/
+│   │   ├── UserNotFoundException.java
+│   │   ├── UserAlreadyActiveException.java
+│   │   ├── ComplaintNotFoundException.java
+│   │   ├── UnauthorizedAccessException.java
+│   │   └── GlobalExceptionHandler.java
+│   └── client/
+│       └── AuthUserServiceClient.java
+├── src/main/resources/
+│   ├── application.yml
+│   └── schema.sql
+└── pom.xml
+Database Entities:
+Complaint.java
+java@Entity
+@Table(name = "complaints")
+public class Complaint {
+    @Id
+    @Generate
