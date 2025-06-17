@@ -228,9 +228,9 @@ DELETE /api/passenger_details/{id} - Delete passenger details
 
 Port: 8081
 
-4. Train Management Service
-train-service/
-├── src/main/java/com/trainms/train/
+4. Train 
+train/
+├── src/main/java/com/train/
 │   ├── TrainServiceApplication.java
 │   ├── controller/
 │   │   ├── TrainController.java
@@ -446,8 +446,8 @@ PUT /api/admin/schedule/{scheduleId} - Update schedule
 Port: 8082
 
 5. Booking & Ticketing Service
-booking-ticketing-service/
-├── src/main/java/com/trainms/booking/
+booking/
+├── src/main/java/com/booking/
 │   ├── BookingServiceApplication.java
 │   ├── controller/
 │   │   ├── BookingController.java
@@ -683,8 +683,8 @@ GET /api/payment/status/{transactionId} - Get payment status
 Port: 8083
 
 6. Food & Pantry Service
-food-pantry-service/
-├── src/main/java/com/trainms/food/
+food/
+├── src/main/java/com/food/
 │   ├── FoodServiceApplication.java
 │   ├── controller/
 │   │   ├── FoodMenuController.java
