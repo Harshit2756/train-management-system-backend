@@ -1,4 +1,4 @@
-package com.tcs.booking.booking;
+package com.tcs.booking;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
