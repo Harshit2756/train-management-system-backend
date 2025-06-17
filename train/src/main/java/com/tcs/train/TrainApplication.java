@@ -1,4 +1,4 @@
-package com.tcs.train.train;
+package com.tcs.train;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
