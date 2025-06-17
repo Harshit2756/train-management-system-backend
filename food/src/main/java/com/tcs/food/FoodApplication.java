@@ -1,4 +1,4 @@
-package com.tcs.food.food;
+package com.tcs.food;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
