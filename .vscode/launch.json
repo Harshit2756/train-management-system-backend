@@ -2,6 +2,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "TrainmanagementeurekaserverApplication",
+      "request": "launch",
+      "mainClass": "com.tcs.trainmanagementeurekaserver.trainmanagementeurekaserver.TrainmanagementeurekaserverApplication",
+      "projectName": "trainmanagementeurekaserver"
+    },
+    {
+      "type": "java",
+      "name": "BookingApplication",
+      "request": "launch",
+      "mainClass": "com.tcs.booking.BookingApplication",
+      "projectName": "booking"
+    },
+    {
+      "type": "java",
       "name": "Spring Boot-UserApplication<user>",
       "request": "launch",
       "cwd": "${workspaceFolder}",
