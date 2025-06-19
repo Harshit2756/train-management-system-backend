@@ -25,7 +25,7 @@ public class PassengerDetails {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String name;
 
     @Column(nullable = false)

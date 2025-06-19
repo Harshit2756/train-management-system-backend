@@ -25,9 +25,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
-
     @Column(name = "contact_number")
     private String contactNumber;
 
@@ -53,7 +50,6 @@ public class User {
     public User(
             String name,
             String email,
-            String password,
             String contactNumber,
             String address,
             UserType userType,
@@ -63,7 +59,6 @@ public class User {
     ) {
         this.name = name;
         this.email = email;
-        this.password = password;
         this.contactNumber = contactNumber;
         this.address = address;
         this.userType = userType;
@@ -96,13 +91,6 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getContactNumber() {
         return contactNumber;

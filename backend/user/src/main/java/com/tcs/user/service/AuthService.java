@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tcs.user.dto.AdminRegistrationDTO;
 import com.tcs.user.dto.LoginDTO;
+import com.tcs.user.dto.LoginResponseDTO;
 import com.tcs.user.dto.UserRegistrationDTO;
 import com.tcs.user.exception.InvalidCredentialsException;
 import com.tcs.user.exception.UserAlreadyExistsException;
@@ -45,10 +46,9 @@ public class AuthService {
             User user = new User(
                     dto.getName(),
                     dto.getEmail(),
-                    passwordEncoder.encode(dto.getPassword()),
                     dto.getContactNumber(),
                     dto.getAddress(),
-                     UserType.CUSTOMER,
+                    UserType.CUSTOMER,
                     Status.ACTIVE, LocalDateTime.now(),
                     LocalDateTime.now()
             );
@@ -77,7 +77,6 @@ public class AuthService {
             User user = new User(
                     dto.getName(),
                     dto.getEmail(),
-                    passwordEncoder.encode(dto.getPassword()),
                     dto.getContactNumber(),
                     dto.getAddress(),
                     UserType.ADMIN,
@@ -100,7 +99,7 @@ public class AuthService {
         }
     }
 
-    public User login(LoginDTO dto) {
+    public LoginResponseDTO login(LoginDTO dto) {
         try {
             Optional<Login> loginOpt = loginRepository.findByEmail(dto.getEmail());
             if (loginOpt.isPresent()) {
@@ -108,7 +107,7 @@ public class AuthService {
                 if (passwordEncoder.matches(dto.getPassword(), login.getPassword()) && login.getStatus() == Status.ACTIVE) {
                     Optional<User> userOpt = userRepository.findByEmail(dto.getEmail());
                     if (userOpt.isPresent()) {
-                        return userOpt.get();
+                        return new LoginResponseDTO(userOpt.get());
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.tcs.user.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,12 @@ public class PassengerService {
         passenger.setGender(dto.getGender());
         passenger.setIdProofType(dto.getIdProofType());
         passenger.setIdProofNumber(dto.getIdProofNumber());
+
+        // Set timestamps for new passengers
+        if (passenger.getId() == null) {
+            passenger.setCreatedAt(LocalDateTime.now());
+        }
+        passenger.setUpdatedAt(LocalDateTime.now());
     }
 
     private PassengerDetailsDTO convertToDTO(PassengerDetails passenger) {

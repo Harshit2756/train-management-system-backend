@@ -16,7 +16,6 @@ import com.tcs.user.dto.LoginDTO;
 import com.tcs.user.dto.LoginResponseDTO;
 import com.tcs.user.dto.UserRegistrationDTO;
 import com.tcs.user.exception.InvalidCredentialsException;
-import com.tcs.user.model.User;
 import com.tcs.user.service.AuthService;
 
 @RestController
@@ -42,8 +41,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponseDTO>> login(@RequestBody LoginDTO dto) {
-        User user = authService.login(dto);
-        LoginResponseDTO loginResponse = new LoginResponseDTO(user);
+        LoginResponseDTO loginResponse = authService.login(dto);
         return ResponseEntity.ok(ApiResponse.success(loginResponse, "Login successful"));
     }
 

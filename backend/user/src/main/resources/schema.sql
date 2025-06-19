@@ -5,6 +5,7 @@ CREATE TABLE users (
     contact_number VARCHAR(20) NOT NULL,
     address VARCHAR(255) NOT NULL,
     user_type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
@@ -33,10 +34,10 @@ CREATE TABLE passenger_details (
 );
 
 -- Sample data for users table
-INSERT INTO users (name, email, contact_number, address, user_type, created_at, updated_at) VALUES
-('John Doe', 'john.doe@example.com', '1234567890', '123 Main St, City', 'CUSTOMER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Jane Smith', 'jane.smith@example.com', '9876543210', '456 Oak Ave, Town', 'CUSTOMER', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Admin User', 'admin@trainservice.com', '5555555555', 'Admin Office', 'ADMIN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO users (name, email, contact_number, address, user_type, status, created_at, updated_at) VALUES
+('John Doe', 'john.doe@example.com', '1234567890', '123 Main St, City', 'CUSTOMER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Jane Smith', 'jane.smith@example.com', '9876543210', '456 Oak Ave, Town', 'CUSTOMER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Admin User', 'admin@trainservice.com', '5555555555', 'Admin Office', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Sample data for login table (password: 'password123' - you should use encrypted passwords in production)
 INSERT INTO login (email, password, user_type, status, created_at) VALUES
