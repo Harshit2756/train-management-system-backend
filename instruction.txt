@@ -155,8 +155,6 @@ As a development team working on the train ticketing system application, we want
 
 
 Acceptance Criteria:
-
-
 - Aim to integrate all individual modules, into fully functional train ticketing system application.
 - All modules should be integrated through REST APIs.
 - Each module should interact with others, passing data effectively between them.

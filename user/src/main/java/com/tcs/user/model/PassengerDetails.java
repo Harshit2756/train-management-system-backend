@@ -1,5 +1,7 @@
 package com.tcs.user.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,146 +9,123 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "passenger_details")
 public class PassengerDetails {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long passengerId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private Long customerId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-  @Column(nullable = false)
-  private String fullName;
+    @Column(nullable = false)
+    private String name;
 
-  @Column(nullable = false)
-  private Integer age;
+    @Column(nullable = false)
+    private Integer age;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Gender gender;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
 
-  @Column
-  private String idProofType;
+    @Column(name = "id_proof_type", nullable = false)
+    private String idProofType;
 
-  @Column
-  private String idProofNumber;
+    @Column(name = "id_proof_number", nullable = false)
+    private String idProofNumber;
 
-  @Column
-  private String nationality;
+    private String nationality;
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-  @Column(nullable = false)
-  private LocalDateTime updatedAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
-  public PassengerDetails() {}
+    public Long getId() {
+        return id;
+    }
 
-  public PassengerDetails(
-    Long customerId,
-    String fullName,
-    Integer age,
-    Gender gender,
-    String idProofType,
-    String idProofNumber,
-    String nationality,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt
-  ) {
-    this.customerId = customerId;
-    this.fullName = fullName;
-    this.age = age;
-    this.gender = gender;
-    this.idProofType = idProofType;
-    this.idProofNumber = idProofNumber;
-    this.nationality = nationality;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getPassengerId() {
-    return passengerId;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public void setPassengerId(Long passengerId) {
-    this.passengerId = passengerId;
-  }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-  public Long getCustomerId() {
-    return customerId;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setCustomerId(Long customerId) {
-    this.customerId = customerId;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getFullName() {
-    return fullName;
-  }
+    public Integer getAge() {
+        return age;
+    }
 
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-  public Integer getAge() {
-    return age;
-  }
+    public Gender getGender() {
+        return gender;
+    }
 
-  public void setAge(Integer age) {
-    this.age = age;
-  }
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
-  public Gender getGender() {
-    return gender;
-  }
+    public String getIdProofType() {
+        return idProofType;
+    }
 
-  public void setGender(Gender gender) {
-    this.gender = gender;
-  }
+    public void setIdProofType(String idProofType) {
+        this.idProofType = idProofType;
+    }
 
-  public String getIdProofType() {
-    return idProofType;
-  }
+    public String getIdProofNumber() {
+        return idProofNumber;
+    }
 
-  public void setIdProofType(String idProofType) {
-    this.idProofType = idProofType;
-  }
+    public void setIdProofNumber(String idProofNumber) {
+        this.idProofNumber = idProofNumber;
+    }
 
-  public String getIdProofNumber() {
-    return idProofNumber;
-  }
+    public String getNationality() {
+        return nationality;
+    }
 
-  public void setIdProofNumber(String idProofNumber) {
-    this.idProofNumber = idProofNumber;
-  }
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
+    }
 
-  public String getNationality() {
-    return nationality;
-  }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setNationality(String nationality) {
-    this.nationality = nationality;
-  }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

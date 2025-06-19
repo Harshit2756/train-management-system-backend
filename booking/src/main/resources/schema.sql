@@ -47,4 +47,4 @@ CREATE TABLE payments (
     status VARCHAR(20) NOT NULL,
     payment_date TIMESTAMP NOT NULL,
     gateway_response VARCHAR(255)
-); 
+);
