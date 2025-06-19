@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tcs.booking.dto.BookingRequestDTO;
+import com.tcs.booking.dto.BookingResponseDTO;
 import com.tcs.booking.model.Booking;
+import com.tcs.booking.model.Seat;
+import com.tcs.booking.model.Ticket;
+import com.tcs.booking.repository.SeatRepository;
 import com.tcs.booking.service.BookingService;
+import com.tcs.booking.service.TicketService;
 
 @RestController
 @RequestMapping("/api/booking")
@@ -21,11 +26,30 @@ public class BookingController {
   @Autowired
   private BookingService bookingService;
 
+  @Autowired
+  private SeatRepository seatRepository;
+
+  @Autowired
+  private TicketService ticketService;
+
   @PostMapping
-  public ResponseEntity<Booking> createBooking(
+  public ResponseEntity<BookingResponseDTO> createBooking(
     @RequestBody BookingRequestDTO dto
   ) {
-    return ResponseEntity.ok(bookingService.createBooking(dto));
+    Booking booking = bookingService.createBooking(dto);
+    // Fetch seats and tickets for the booking
+    java.util.List<Seat> seats = seatRepository.findByBookingId(
+      booking.getBookingId()
+    );
+    java.util.List<Ticket> tickets = ticketService.getTicketsByBookingId(
+      booking.getBookingId()
+    );
+    BookingResponseDTO response = new BookingResponseDTO(
+      booking,
+      seats,
+      tickets
+    );
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/{bookingId}")
