@@ -27,6 +27,7 @@ CREATE TABLE seats (
     created_at TIMESTAMP NOT NULL
 );
 
+-- not needed
 CREATE TABLE tickets (
     ticket_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     booking_id BIGINT NOT NULL,
