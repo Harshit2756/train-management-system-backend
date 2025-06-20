@@ -10,114 +10,127 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "schedules")
 public class Schedule {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long scheduleId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long scheduleId;
 
-  @Column(nullable = false)
-  private Long trainId;
+    @Column(nullable = false)
+    private Long trainId;
 
-  @Column(nullable = false)
-  private LocalDate travelDate;
+    @Column(nullable = false)
+    private LocalDate travelDate;
 
-  @Column(nullable = false)
-  private Integer availableAcSeats;
+    @Column(nullable = false)
+    private Integer availableAcSeats;
 
-  @Column(nullable = false)
-  private Integer availableSleeperSeats;
+    @Column(nullable = false)
+    private Integer availableSleeperSeats;
 
-  @Column(nullable = false)
-  private Integer availableGeneralSeats;
+    @Column(nullable = false)
+    private Integer availableGeneralSeats;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private ScheduleStatus status = ScheduleStatus.SCHEDULED;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ScheduleStatus status = ScheduleStatus.SCHEDULED;
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-  @Column(nullable = false)
-  private LocalDateTime updatedAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
-  public Schedule() {
-    super();
-  }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
-  public Long getScheduleId() {
-    return scheduleId;
-  }
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
-  public void setScheduleId(Long scheduleId) {
-    this.scheduleId = scheduleId;
-  }
+    public Schedule() {
+        super();
+    }
 
-  public Long getTrainId() {
-    return trainId;
-  }
+    public Long getScheduleId() {
+        return scheduleId;
+    }
 
-  public void setTrainId(Long trainId) {
-    this.trainId = trainId;
-  }
+    public void setScheduleId(Long scheduleId) {
+        this.scheduleId = scheduleId;
+    }
 
-  public LocalDate getTravelDate() {
-    return travelDate;
-  }
+    public Long getTrainId() {
+        return trainId;
+    }
 
-  public void setTravelDate(LocalDate travelDate) {
-    this.travelDate = travelDate;
-  }
+    public void setTrainId(Long trainId) {
+        this.trainId = trainId;
+    }
 
-  public Integer getAvailableAcSeats() {
-    return availableAcSeats;
-  }
+    public LocalDate getTravelDate() {
+        return travelDate;
+    }
 
-  public void setAvailableAcSeats(Integer availableAcSeats) {
-    this.availableAcSeats = availableAcSeats;
-  }
+    public void setTravelDate(LocalDate travelDate) {
+        this.travelDate = travelDate;
+    }
 
-  public Integer getAvailableSleeperSeats() {
-    return availableSleeperSeats;
-  }
+    public Integer getAvailableAcSeats() {
+        return availableAcSeats;
+    }
 
-  public void setAvailableSleeperSeats(Integer availableSleeperSeats) {
-    this.availableSleeperSeats = availableSleeperSeats;
-  }
+    public void setAvailableAcSeats(Integer availableAcSeats) {
+        this.availableAcSeats = availableAcSeats;
+    }
 
-  public Integer getAvailableGeneralSeats() {
-    return availableGeneralSeats;
-  }
+    public Integer getAvailableSleeperSeats() {
+        return availableSleeperSeats;
+    }
 
-  public void setAvailableGeneralSeats(Integer availableGeneralSeats) {
-    this.availableGeneralSeats = availableGeneralSeats;
-  }
+    public void setAvailableSleeperSeats(Integer availableSleeperSeats) {
+        this.availableSleeperSeats = availableSleeperSeats;
+    }
 
-  public ScheduleStatus getStatus() {
-    return status;
-  }
+    public Integer getAvailableGeneralSeats() {
+        return availableGeneralSeats;
+    }
 
-  public void setStatus(ScheduleStatus status) {
-    this.status = status;
-  }
+    public void setAvailableGeneralSeats(Integer availableGeneralSeats) {
+        this.availableGeneralSeats = availableGeneralSeats;
+    }
 
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
+    public ScheduleStatus getStatus() {
+        return status;
+    }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setStatus(ScheduleStatus status) {
+        this.status = status;
+    }
 
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

@@ -49,7 +49,7 @@ public class BulkUploadService {
       failureCount++;
       errorMessages.add("Failed to process file: " + e.getMessage());
     }
-    BulkUploadResponseDTO response = new BulkUploadResponseDTO();
+    BulkUploadResponseDTO response = new BulkUploadResponseDTO(failureCount, failureCount);
     response.setSuccessCount(successCount);
     response.setFailureCount(failureCount);
     response.setErrorMessages(errorMessages);

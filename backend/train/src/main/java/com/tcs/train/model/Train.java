@@ -9,136 +9,149 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "trains")
 public class Train {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long trainId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long trainId;
 
-  @Column(nullable = false, unique = true)
-  private String trainNumber;
+    @Column(nullable = false, unique = true)
+    private String trainNumber;
 
-  @Column(nullable = false)
-  private String trainName;
+    @Column(nullable = false)
+    private String trainName;
 
-  @Column(nullable = false)
-  private String trainType;
+    @Column(nullable = false)
+    private String trainType;
 
-  @Column(nullable = false)
-  private Integer totalSeats;
+    @Column(nullable = false)
+    private Integer totalSeats;
 
-  @Column(nullable = false)
-  private Integer acSeats;
+    @Column(nullable = false)
+    private Integer acSeats;
 
-  @Column(nullable = false)
-  private Integer sleeperSeats;
+    @Column(nullable = false)
+    private Integer sleeperSeats;
 
-  @Column(nullable = false)
-  private Integer generalSeats;
+    @Column(nullable = false)
+    private Integer generalSeats;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private TrainStatus status = TrainStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TrainStatus status = TrainStatus.ACTIVE;
 
-  @Column(nullable = false)
-  private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
-  @Column(nullable = false)
-  private LocalDateTime updatedAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
-  public Train() {
-    super();
-  }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 
-  public String getTrainNumber() {
-    return trainNumber;
-  }
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
-  public void setTrainNumber(String trainNumber) {
-    this.trainNumber = trainNumber;
-  }
+    public Train() {
+        super();
+    }
 
-  public String getTrainName() {
-    return trainName;
-  }
+    public String getTrainNumber() {
+        return trainNumber;
+    }
 
-  public void setTrainName(String trainName) {
-    this.trainName = trainName;
-  }
+    public void setTrainNumber(String trainNumber) {
+        this.trainNumber = trainNumber;
+    }
 
-  public String getTrainType() {
-    return trainType;
-  }
+    public String getTrainName() {
+        return trainName;
+    }
 
-  public void setTrainType(String trainType) {
-    this.trainType = trainType;
-  }
+    public void setTrainName(String trainName) {
+        this.trainName = trainName;
+    }
 
-  public Integer getTotalSeats() {
-    return totalSeats;
-  }
+    public String getTrainType() {
+        return trainType;
+    }
 
-  public void setTotalSeats(Integer totalSeats) {
-    this.totalSeats = totalSeats;
-  }
+    public void setTrainType(String trainType) {
+        this.trainType = trainType;
+    }
 
-  public Integer getAcSeats() {
-    return acSeats;
-  }
+    public Integer getTotalSeats() {
+        return totalSeats;
+    }
 
-  public void setAcSeats(Integer acSeats) {
-    this.acSeats = acSeats;
-  }
+    public void setTotalSeats(Integer totalSeats) {
+        this.totalSeats = totalSeats;
+    }
 
-  public Integer getSleeperSeats() {
-    return sleeperSeats;
-  }
+    public Integer getAcSeats() {
+        return acSeats;
+    }
 
-  public void setSleeperSeats(Integer sleeperSeats) {
-    this.sleeperSeats = sleeperSeats;
-  }
+    public void setAcSeats(Integer acSeats) {
+        this.acSeats = acSeats;
+    }
 
-  public Integer getGeneralSeats() {
-    return generalSeats;
-  }
+    public Integer getSleeperSeats() {
+        return sleeperSeats;
+    }
 
-  public void setGeneralSeats(Integer generalSeats) {
-    this.generalSeats = generalSeats;
-  }
+    public void setSleeperSeats(Integer sleeperSeats) {
+        this.sleeperSeats = sleeperSeats;
+    }
 
-  public TrainStatus getStatus() {
-    return status;
-  }
+    public Integer getGeneralSeats() {
+        return generalSeats;
+    }
 
-  public void setStatus(TrainStatus status) {
-    this.status = status;
-  }
+    public void setGeneralSeats(Integer generalSeats) {
+        this.generalSeats = generalSeats;
+    }
 
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
+    public TrainStatus getStatus() {
+        return status;
+    }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
+    public void setStatus(TrainStatus status) {
+        this.status = status;
+    }
 
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
-  }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-  public Long getTrainId() {
-    return trainId;
-  }
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
-  public void setTrainId(Long trainId) {
-    this.trainId = trainId;
-  }
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getTrainId() {
+        return trainId;
+    }
+
+    public void setTrainId(Long trainId) {
+        this.trainId = trainId;
+    }
 }

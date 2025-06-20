@@ -4,36 +4,37 @@ import java.util.List;
 
 public class BulkUploadResponseDTO {
 
-  private int successCount;
-  private int failureCount;
-  private List<String> errorMessages;
+    private int successCount;
+    private int failureCount;
+    private List<String> errorMessages;
 
-  public BulkUploadResponseDTO() {
-  }
+    public BulkUploadResponseDTO(int successCount, int failureCount) {
+        this.successCount = successCount;
+        this.failureCount = failureCount;
+    }
 
-  public int getSuccessCount() {
-    return successCount;
-  }
+    public int getSuccessCount() {
+        return successCount;
+    }
 
-  public void setSuccessCount(int successCount) {
-    this.successCount = successCount;
-  }
+    public void setSuccessCount(int successCount) {
+        this.successCount = successCount;
+    }
 
-  public int getFailureCount() {
-    return failureCount;
-  }
+    public int getFailureCount() {
+        return failureCount;
+    }
 
-  public void setFailureCount(int failureCount) {
-    this.failureCount = failureCount;
-  }
+    public void setFailureCount(int failureCount) {
+        this.failureCount = failureCount;
+    }
 
-  public List<String> getErrorMessages() {
-    return errorMessages;
-  }
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
 
-  public void setErrorMessages(List<String> errorMessages) {
-    this.errorMessages = errorMessages;
-  }
+    public void setErrorMessages(List<String> errorMessages) {
+        this.errorMessages = errorMessages;
+    }
 
-  
 }
