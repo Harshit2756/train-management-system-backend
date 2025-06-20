@@ -149,4 +149,12 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         return bookingRepository.save(booking);
     }
+
+    public Booking getBookingByPnr(String pnr) {
+        Booking booking = bookingRepository.findByPnr(pnr);
+        if (booking == null) {
+            throw new BookingNotFoundException("Booking not found with PNR: " + pnr);
+        }
+        return booking;
+    }
 }

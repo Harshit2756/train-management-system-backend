@@ -12,7 +12,7 @@ import com.tcs.user.dto.UserProfileDTO;
 import com.tcs.user.service.PassengerService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserDashboardController {
 
     @Autowired

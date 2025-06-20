@@ -17,7 +17,7 @@ import com.tcs.train.dto.ScheduleDTO;
 import com.tcs.train.service.ScheduleService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/train")
 public class ScheduleController {
 
     @Autowired

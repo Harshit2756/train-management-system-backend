@@ -15,7 +15,7 @@ import com.tcs.train.dto.TrainDTO;
 import com.tcs.train.service.TrainService;
 
 @RestController
-@RequestMapping("/api/trains")
+@RequestMapping("/api/train")
 public class TrainController {
 
     @Autowired

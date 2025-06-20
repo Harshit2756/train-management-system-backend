@@ -1,0 +1,54 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-TrainmanagementeurekaserverApplication<trainmanagementeurekaserver>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tcs.trainmanagementeurekaserver.trainmanagementeurekaserver.TrainmanagementeurekaserverApplication",
+      "projectName": "trainmanagementeurekaserver",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-TrainApplication<train>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tcs.train.TrainApplication",
+      "projectName": "train",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-FoodApplication<food>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tcs.food.FoodApplication",
+      "projectName": "food",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-BookingApplication<booking>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tcs.booking.BookingApplication",
+      "projectName": "booking",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    },
+    {
+      "type": "java",
+      "name": "Spring Boot-UserApplication<user>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.tcs.user.UserApplication",
+      "projectName": "user",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ import com.tcs.user.exception.InvalidCredentialsException;
 import com.tcs.user.service.AuthService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class AuthController {
 
     @Autowired

@@ -12,7 +12,7 @@ import com.tcs.booking.model.Ticket;
 import com.tcs.booking.service.TicketService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/booking")
 public class TicketController {
 
     @Autowired

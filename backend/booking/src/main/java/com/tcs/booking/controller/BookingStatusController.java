@@ -9,19 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tcs.booking.dto.ApiResponse;
 import com.tcs.booking.model.Booking;
-import com.tcs.booking.repository.BookingRepository;
+import com.tcs.booking.service.BookingService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/booking") 
 public class BookingStatusController {
 
     @Autowired
-    private BookingRepository bookingRepository;
+    private BookingService bookingService;
 
     @GetMapping("/booking_status/{pnr}")
     public ResponseEntity<ApiResponse<String>> getBookingStatus(@PathVariable String pnr) {
-        Booking booking = bookingRepository.findByPnr(pnr);
-        String status = booking != null ? booking.getStatus().name() : "NOT_FOUND";
-        return ResponseEntity.ok(ApiResponse.success(status));
+        Booking booking = bookingService.getBookingByPnr(pnr);
+        return ResponseEntity.ok(ApiResponse.success(booking.getStatus().name()));
     }
 }

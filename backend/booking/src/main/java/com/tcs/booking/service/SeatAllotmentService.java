@@ -7,7 +7,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tcs.booking.client.PassengerServiceClient;
+import com.tcs.booking.dto.ApiResponse;
 import com.tcs.booking.dto.BookingRequestDTO;
+import com.tcs.booking.dto.PassengerDTO;
 import com.tcs.booking.dto.SeatSelectionDTO;
 import com.tcs.booking.model.Seat;
 import com.tcs.booking.model.SeatStatus;
@@ -19,6 +22,9 @@ public class SeatAllotmentService {
 
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private PassengerServiceClient passengerServiceClient;
 
     public List<SeatSelectionDTO> allocateSeats(BookingRequestDTO dto) {
         // Fetch all seats for the train, class, and date
@@ -39,10 +45,13 @@ public class SeatAllotmentService {
                 .collect(Collectors.toList());
         // Senior citizen logic: prioritize lower berths
         List<SeatSelectionDTO> result = new ArrayList<>();
-        int count = 0;
+
         for (Long passengerId : dto.getPassengerIds()) {
-            // For demo, assume every 3rd passenger is senior (should fetch age from DB)
-            boolean isSenior = (count % 3 == 0);
+            ApiResponse<PassengerDTO> passengerResponse = passengerServiceClient.getPassengerById(passengerId, dto.getCustomerId());
+            PassengerDTO passenger = passengerResponse.getData();
+
+            boolean isSenior = (passenger != null && passenger.getAge() != null && passenger.getAge() > 60);
+
             Seat seat = availableSeats
                     .stream()
                     .filter(s -> isSenior ? s.getSeatType() == SeatType.LOWER : true)
@@ -61,7 +70,6 @@ public class SeatAllotmentService {
                 result.add(sel);
                 availableSeats.remove(seat);
             }
-            count++;
         }
         return result;
     }

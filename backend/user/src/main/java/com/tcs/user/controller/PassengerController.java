@@ -20,7 +20,7 @@ import com.tcs.user.dto.PassengerDetailsDTO;
 import com.tcs.user.service.PassengerService;
 
 @RestController
-@RequestMapping("/api/passengers")
+@RequestMapping("/api/user/passengers")
 public class PassengerController {
 
     @Autowired

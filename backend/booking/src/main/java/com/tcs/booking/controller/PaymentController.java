@@ -14,7 +14,7 @@ import com.tcs.booking.model.Payment;
 import com.tcs.booking.service.PaymentService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/booking")
 public class PaymentController {
 
     @Autowired

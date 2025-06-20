@@ -21,7 +21,7 @@ import com.tcs.train.service.BulkUploadService;
 import com.tcs.train.service.TrainService;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/train/admin")
 public class AdminTrainController {
 
     @Autowired
