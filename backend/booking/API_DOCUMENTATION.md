@@ -1,346 +1,126 @@
-# 🎟️ Booking Microservice API Documentation
+# Booking Service API Documentation
 
-**Base URL:**
-`http://<host>:8083/api`
+This document provides details about the API endpoints available in the Booking microservice.
 
----
+## 1. Booking Endpoints
 
-## 1. Create New Booking
+Base Path: `/api/booking`
 
-**Endpoint:**  
-`POST /booking`
+### 1.1. Create Booking
 
-**Description:**  
-Create a new booking.
-
-**Request:**
-
-```json
-{
-  "customerId": 1,
-  "trainId": 101,
-  "fromStationId": 10,
-  "toStationId": 20,
-  "travelDate": "2024-07-01",
-  "departureTime": "10:00:00",
-  "arrivalTime": "18:00:00",
-  "totalPassengers": 2,
-  "passengerIds": [1001, 1002],
-  "seatSelections": [
-    {
-      "passengerId": 1001,
-      "seatType": "LOWER",
-      "seatClass": "AC_2",
-      "seatNumber": "A1-1",
-      "fare": 1200.0
-    },
-    {
-      "passengerId": 1002,
-      "seatType": "UPPER",
-      "seatClass": "AC_2",
-      "seatNumber": "A1-2",
-      "fare": 1200.0
-    }
-  ],
-  "totalAmount": 2400.0
-}
-```
-
-**Response:**
-
-```json
-{
-  "bookingId": 1,
-  "pnr": "PNR1234567890",
-  "customerId": 1,
-  "trainId": 101,
-  "fromStationId": 10,
-  "toStationId": 20,
-  "travelDate": "2024-07-01",
-  "departureTime": "10:00:00",
-  "arrivalTime": "18:00:00",
-  "totalPassengers": 2,
-  "totalAmount": 2400.0,
-  "status": "CONFIRMED",
-  "bookingDate": "2024-06-01T12:00:00",
-  "createdAt": "2024-06-01T12:00:00"
-}
-```
-
----
-
-## 2. Get Booking Details
-
-**Endpoint:**  
-`GET /booking/{bookingId}`
-
-**Description:**  
-Get details of a booking by booking ID.
-
-**Response:**
-Same as above (Booking object).
-
----
-
-## 3. Cancel Booking
-
-**Endpoint:**  
-`PUT /booking/{bookingId}/cancel`
-
-**Description:**  
-Cancel a booking by booking ID.
-
-**Response:**
-Same as above (Booking object with status `CANCELLED`).
-
----
-
-## 4. Get Available Seats
-
-**Endpoint:**  
-`GET /seats/{trainId}/{date}`
-
-**Description:**  
-Get available seats for a train on a specific date.
-
-**Response:**
-
-```json
-[
+- **Endpoint:** `POST /`
+- **Description:** Creates a new booking for a train journey. It orchestrates seat allocation, payment processing, and ticket generation.
+- **Request Body:** `BookingRequestDTO`
+  ```json
   {
-    "seatId": 1,
-    "bookingId": 1,
-    "passengerId": 1001,
-    "seatNumber": "A1-1",
-    "seatType": "LOWER",
-    "seatClass": "AC_2",
-    "fare": 1200.0,
-    "status": "CONFIRMED",
-    "createdAt": "2024-06-01T12:00:00"
+    "customerId": 1,
+    "trainId": 101,
+    "fromStationId": 1,
+    "toStationId": 5,
+    "travelDate": "2024-12-25",
+    "departureTime": "10:00:00",
+    "arrivalTime": "18:00:00",
+    "totalPassengers": 2,
+    "totalAmount": 1500.0,
+    "passengers": [
+      {
+        "passengerId": 1,
+        "seatNumber": "A1",
+        "seatType": "WINDOW",
+        "seatClass": "AC"
+      },
+      {
+        "passengerId": 2,
+        "seatNumber": "A2",
+        "seatType": "AISLE",
+        "seatClass": "AC"
+      }
+    ]
   }
-]
-```
+  ```
+- **Responses:**
+  - `200 OK`: Returns a `BookingResponseDTO` with the details of the created booking, including allocated seats and generated tickets.
+  - `404 Not Found`: If the specified train is not found.
+  - `400 Bad Request`: If the input is invalid (e.g., zero passengers).
+  - `500 Internal Server Error`: For payment failures or other server-side issues.
+
+### 1.2. Get Booking Details
+
+- **Endpoint:** `GET /{bookingId}`
+- **Description:** Retrieves the details of a specific booking by its ID.
+- **Path Variable:**
+  - `bookingId` (Long): The unique identifier of the booking.
+- **Responses:**
+  - `200 OK`: Returns the `Booking` object.
+  - `404 Not Found`: If no booking is found with the given ID.
+
+### 1.3. Cancel Booking
+
+- **Endpoint:** `PUT /{bookingId}/cancel`
+- **Description:** Cancels an existing booking.
+- **Path Variable:**
+  - `bookingId` (Long): The unique identifier of the booking to be canceled.
+- **Responses:**
+  - `200 OK`: Returns the updated `Booking` object with the `CANCELLED` status.
+  - `404 Not Found`: If no booking is found with the given ID.
 
 ---
 
-## 5. Reserve Seats
+## 2. Booking Status Endpoint
 
-**Endpoint:**  
-`POST /seats/reserve`
+Base Path: `/api`
 
-**Description:**  
-Reserve seats for passengers.
+### 2.1. Get Booking Status by PNR
 
-**Request:**
+- **Endpoint:** `GET /booking_status/{pnr}`
+- **Description:** Fetches the current status of a booking using the PNR number.
+- **Path Variable:**
+  - `pnr` (String): The Passenger Name Record number of the booking.
+- **Responses:**
+  - `200 OK`: Returns the booking status as a string (e.g., "CONFIRMED", "CANCELLED", "PENDING"). Returns "NOT_FOUND" if the PNR does not exist.
 
-```json
-[
+---
+
+## 3. Payment Endpoints
+
+Base Path: `/api`
+
+### 3.1. Process Payment
+
+- **Endpoint:** `POST /payment`
+- **Description:** Processes a payment for a booking.
+- **Request Body:** `Payment` object
+  ```json
   {
     "bookingId": 1,
-    "passengerId": 1001,
-    "seatNumber": "A1-1",
-    "seatType": "LOWER",
-    "seatClass": "AC_2",
-    "fare": 1200.0,
-    "status": "CONFIRMED",
-    "createdAt": "2024-06-01T12:00:00"
+    "amount": 1500.0,
+    "paymentMethod": "UPI"
   }
-]
-```
-
-**Response:**
-Same as above (array of Seat objects).
-
----
-
-## 6. Get Booking Status by PNR
-
-**Endpoint:**  
-`GET /booking_status/{pnr}`
-
-**Description:**  
-Get the status of a booking by PNR.
-
-**Response:**
-
-```json
-"CONFIRMED"
-```
-
----
-
-## 7. Get Ticket Details
-
-**Endpoint:**  
-`GET /fetch_ticket_details/{ticketId}`
-
-**Description:**  
-Get ticket details by ticket ID.
-
-**Response:**
-
-```json
-{
-  "ticketId": 1,
-  "bookingId": 1,
-  "passengerId": 1001,
-  "startDate": "2024-07-01",
-  "endDate": "2024-07-01",
-  "status": "ACTIVE",
-  "createdAt": "2024-06-01T12:00:00"
-}
-```
-
----
-
-## 8. Process Payment
-
-**Endpoint:**  
-`POST /payment`
-
-**Description:**  
-Process a payment for a booking.
-
-**Request:**
-
-```json
-{
-  "bookingId": 1,
-  "transactionId": "TXN123456",
-  "amount": 2400.0,
-  "paymentMethod": "UPI",
-  "status": "PENDING",
-  "paymentDate": "2024-06-01T12:00:00",
-  "gatewayResponse": "Success"
-}
-```
-
-**Response:**
-
-```json
-{
-  "paymentId": 1,
-  "bookingId": 1,
-  "transactionId": "TXN123456",
-  "amount": 2400.0,
-  "paymentMethod": "UPI",
-  "status": "SUCCESS",
-  "paymentDate": "2024-06-01T12:00:00",
-  "gatewayResponse": "Success"
-}
-```
-
----
-
-## 9. Get Payment Status
-
-**Endpoint:**  
-`GET /payment/status/{transactionId}`
-
-**Description:**  
-Get the status of a payment by transaction ID.
-
-**Response:**
-Same as above (Payment object).
-
----
-
-# 📄 Data Models
-
-## BookingRequestDTO
-
-```json
-{
-  "customerId": 1,
-  "trainId": 101,
-  "fromStationId": 10,
-  "toStationId": 20,
-  "travelDate": "2024-07-01",
-  "departureTime": "10:00:00",
-  "arrivalTime": "18:00:00",
-  "totalPassengers": 2,
-  "passengerIds": [1001, 1002],
-  "seatSelections": [
-    {
-      "passengerId": 1001,
-      "seatType": "LOWER",
-      "seatClass": "AC_2",
-      "seatNumber": "A1-1",
-      "fare": 1200.0
-    },
-    {
-      "passengerId": 1002,
-      "seatType": "UPPER",
-      "seatClass": "AC_2",
-      "seatNumber": "A1-2",
-      "fare": 1200.0
-    }
-  ],
-  "totalAmount": 2400.0
-}
-```
-
-## SeatSelectionDTO
-
-```json
-{
-  "passengerId": 1001,
-  "seatType": "LOWER",
-  "seatClass": "AC_2",
-  "seatNumber": "A1-1",
-  "fare": 1200.0
-}
-```
-
-## TicketDTO
-
-```json
-{
-  "ticketId": 1,
-  "bookingId": 1,
-  "passengerId": 1001,
-  "startDate": "2024-07-01",
-  "endDate": "2024-07-01",
-  "status": "ACTIVE"
-}
-```
-
-## PaymentDTO
-
-```json
-{
-  "paymentId": 1,
-  "bookingId": 1,
-  "transactionId": "TXN123456",
-  "amount": 2400.0,
-  "paymentMethod": "UPI",
-  "status": "SUCCESS",
-  "paymentDate": "2024-06-01T12:00:00",
-  "gatewayResponse": "Success"
-}
-```
-
----
-
-# 🛑 Error Responses
-
-- **400 Bad Request:**
-  ```json
-  { "error": "Seat not available" }
   ```
-- **404 Not Found:**
-  ```json
-  { "error": "Booking not found with id: ..." }
-  ```
-- **402 Payment Required:**
-  ```json
-  { "error": "Payment failed" }
-  ```
-- **500 Internal Server Error:**
-  ```json
-  { "error": "Internal server error: <details>" }
-  ```
+- **Responses:**
+  - `200 OK`: Returns the `Payment` object with the transaction details and status.
+
+### 3.2. Get Payment Status
+
+- **Endpoint:** `GET /payment/status/{transactionId}`
+- **Description:** Retrieves the status of a payment by its transaction ID.
+- **Path Variable:**
+  - `transactionId` (String): The unique identifier of the payment transaction.
+- **Responses:**
+  - `200 OK`: Returns the `Payment` object.
 
 ---
 
-If you need documentation for more advanced booking flows, let me know!
+## 4. Ticket Endpoint
+
+Base Path: `/api`
+
+### 4.1. Get Ticket Details
+
+- **Endpoint:** `GET /fetch_ticket_details/{ticketId}`
+- **Description:** Retrieves the details of a specific ticket by its ID.
+- **Path Variable:**
+  - `ticketId` (Long): The unique identifier of the ticket.
+- **Responses:**
+  - `200 OK`: Returns the `Ticket` object.
+  - `404 Not Found`: If no ticket is found with the given ID.

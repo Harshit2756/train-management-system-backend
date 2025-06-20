@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcs.booking.dto.ApiResponse;
 import com.tcs.booking.model.Booking;
 import com.tcs.booking.repository.BookingRepository;
 
@@ -14,14 +15,13 @@ import com.tcs.booking.repository.BookingRepository;
 @RequestMapping("/api")
 public class BookingStatusController {
 
-  @Autowired
-  private BookingRepository bookingRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
 
-  @GetMapping("/booking_status/{pnr}")
-  public ResponseEntity<String> getBookingStatus(@PathVariable String pnr) {
-    Booking booking = bookingRepository.findByPnr(pnr);
-    return ResponseEntity.ok(
-      booking != null ? booking.getStatus().name() : "NOT_FOUND"
-    );
-  }
+    @GetMapping("/booking_status/{pnr}")
+    public ResponseEntity<ApiResponse<String>> getBookingStatus(@PathVariable String pnr) {
+        Booking booking = bookingRepository.findByPnr(pnr);
+        String status = booking != null ? booking.getStatus().name() : "NOT_FOUND";
+        return ResponseEntity.ok(ApiResponse.success(status));
+    }
 }

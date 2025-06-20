@@ -7,53 +7,34 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tcs.food.dto.FoodInventoryDTO;
-import com.tcs.food.dto.FoodOrderDTO;
-import com.tcs.food.service.FoodInventoryService;
+import com.tcs.food.dto.ApiResponse;
+import com.tcs.food.dto.FoodOrderRequestDTO;
+import com.tcs.food.dto.FoodOrderResponseDTO;
 import com.tcs.food.service.FoodOrderService;
 
 @RestController
-@RequestMapping("/api/food_order")
+@RequestMapping("/api/food/orders")
 public class FoodOrderController {
 
     @Autowired
     private FoodOrderService foodOrderService;
 
-    @Autowired
-    private FoodInventoryService foodInventoryService;
-
     @PostMapping
-    public ResponseEntity<FoodOrderDTO> placeOrder(@RequestBody FoodOrderDTO orderDTO) {
-        FoodOrderDTO created = foodOrderService.placeOrder(orderDTO);
-        return ResponseEntity.status(201).body(created);
+    public ResponseEntity<ApiResponse<FoodOrderResponseDTO>> placeOrder(@RequestBody FoodOrderRequestDTO requestDTO) {
+        return ResponseEntity.ok(ApiResponse.success(foodOrderService.placeOrder(requestDTO)));
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<FoodOrderDTO> getOrderById(@PathVariable Long orderId) {
-        FoodOrderDTO order = foodOrderService.getOrderById(orderId);
-        return ResponseEntity.ok(order);
+    public ResponseEntity<ApiResponse<FoodOrderResponseDTO>> getOrderById(@PathVariable Long orderId) {
+        return ResponseEntity.ok(ApiResponse.success(foodOrderService.getOrderById(orderId)));
     }
 
-    @PutMapping("/{orderId}/cancel")
-    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        foodOrderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/history/{customerId}")
+    public ResponseEntity<ApiResponse<List<FoodOrderResponseDTO>>> getOrderHistory(@PathVariable Long customerId) {
+        return ResponseEntity.ok(ApiResponse.success(foodOrderService.getOrderHistory(customerId)));
     }
-
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<FoodOrderDTO>> getOrdersByCustomer(@PathVariable Long customerId) {
-        List<FoodOrderDTO> orders = foodOrderService.getOrdersByCustomer(customerId);
-        return ResponseEntity.ok(orders);
-    }
-
-    @GetMapping("/inventory/{pantryId}")
-    public ResponseEntity<List<FoodInventoryDTO>> getInventoryByPantry(@PathVariable Long pantryId) {
-        List<FoodInventoryDTO> inventory = foodInventoryService.getInventoryByPantry(pantryId);
-        return ResponseEntity.ok(inventory);
-    }
-} 
+}

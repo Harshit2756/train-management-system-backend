@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tcs.booking.dto.ApiResponse;
 import com.tcs.booking.model.Payment;
 import com.tcs.booking.service.PaymentService;
 
@@ -16,18 +17,18 @@ import com.tcs.booking.service.PaymentService;
 @RequestMapping("/api")
 public class PaymentController {
 
-  @Autowired
-  private PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
-  @PostMapping("/payment")
-  public ResponseEntity<Payment> processPayment(@RequestBody Payment payment) {
-    return ResponseEntity.ok(paymentService.processPayment(payment));
-  }
+    @PostMapping("/payment")
+    public ResponseEntity<ApiResponse<Payment>> processPayment(@RequestBody Payment payment) {
+        return ResponseEntity.ok(ApiResponse.success(paymentService.processPayment(payment)));
+    }
 
-  @GetMapping("/payment/status/{transactionId}")
-  public ResponseEntity<Payment> getPaymentStatus(
-    @PathVariable String transactionId
-  ) {
-    return ResponseEntity.ok(paymentService.getPaymentStatus(transactionId));
-  }
+    @GetMapping("/payment/status/{transactionId}")
+    public ResponseEntity<ApiResponse<Payment>> getPaymentStatus(
+            @PathVariable String transactionId
+    ) {
+        return ResponseEntity.ok(ApiResponse.success(paymentService.getPaymentStatus(transactionId)));
+    }
 }

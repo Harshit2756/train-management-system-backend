@@ -1,12 +1,16 @@
 package com.tcs.booking.client;
 
-import org.springframework.stereotype.Component;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
-@Component
-public class TrainServiceClient {
+import com.tcs.booking.dto.ApiResponse;
+import com.tcs.booking.dto.TrainDTO;
 
-  public boolean validateTrain(Long trainId) {
-    // Dummy implementation: always return true
-    return true;
-  }
+@FeignClient(name = "train-service", path = "/api/trains")
+public interface TrainServiceClient {
+
+    @GetMapping("/{trainId}")
+    ApiResponse<TrainDTO> getTrainById(@PathVariable("trainId") Long trainId);
+
 }

@@ -47,4 +47,27 @@ CREATE TABLE schedules (
     status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
-); 
+);
+
+-- Dummy Data
+INSERT INTO stations (station_code, station_name, city, state, zone, status) VALUES
+('NDLS', 'New Delhi', 'New Delhi', 'Delhi', 'NR', 'ACTIVE'),
+('BCT', 'Mumbai Central', 'Mumbai', 'Maharashtra', 'WR', 'ACTIVE'),
+('HWH', 'Howrah Junction', 'Kolkata', 'West Bengal', 'ER', 'ACTIVE'),
+('MAS', 'Chennai Central', 'Chennai', 'Tamil Nadu', 'SR', 'ACTIVE'),
+('SBC', 'Bengaluru City', 'Bengaluru', 'Karnataka', 'SWR', 'ACTIVE'),
+('HYB', 'Hyderabad Deccan', 'Hyderabad', 'Telangana', 'SCR', 'ACTIVE');
+
+INSERT INTO trains (train_number, train_name, train_type, total_seats, ac_seats, sleeper_seats, general_seats, status, created_at, updated_at) VALUES
+('12001', 'Shatabdi Express', 'Express', 500, 100, 200, 200, 'ACTIVE', '2024-06-20 10:00:00', '2024-06-20 10:00:00'),
+('12002', 'Rajdhani Express', 'Express', 600, 150, 250, 200, 'ACTIVE', '2024-06-20 10:00:00', '2024-06-20 10:00:00');
+
+INSERT INTO routes (train_id, from_station_id, to_station_id, distance, sequence_number, arrival_time, departure_time, stop_duration, ac_fare, sleeper_fare, general_fare) VALUES
+(1, 1, 2, 1400, 1, '10:00:00', '10:05:00', 5, 2000.00, 1000.00, 500.00),
+(1, 2, 3, 1500, 2, '20:00:00', '20:05:00', 5, 2200.00, 1100.00, 550.00),
+(2, 4, 5, 350, 1, '08:00:00', '08:05:00', 5, 800.00, 400.00, 200.00),
+(2, 5, 6, 600, 2, '14:00:00', '14:05:00', 5, 1200.00, 600.00, 300.00);
+
+INSERT INTO schedules (train_id, travel_date, available_ac_seats, available_sleeper_seats, available_general_seats, status, created_at, updated_at) VALUES
+(1, '2024-12-25', 98, 198, 200, 'ON_TIME', '2024-06-20 10:00:00', '2024-06-20 10:00:00'),
+(2, '2024-12-26', 150, 249, 200, 'ON_TIME', '2024-06-21 11:00:00', '2024-06-21 11:00:00'); 

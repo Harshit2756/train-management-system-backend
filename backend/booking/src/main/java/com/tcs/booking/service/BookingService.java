@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tcs.booking.client.TrainServiceClient;
+import com.tcs.booking.dto.ApiResponse;
 import com.tcs.booking.dto.BookingRequestDTO;
 import com.tcs.booking.dto.SeatSelectionDTO;
+import com.tcs.booking.dto.TrainDTO;
 import com.tcs.booking.exception.BookingNotFoundException;
 import com.tcs.booking.exception.PaymentFailedException;
 import com.tcs.booking.exception.SeatNotAvailableException;
+import com.tcs.booking.exception.TrainNotFoundException;
 import com.tcs.booking.model.Booking;
 import com.tcs.booking.model.BookingStatus;
 import com.tcs.booking.model.Payment;
@@ -39,8 +43,21 @@ public class BookingService {
     @Autowired
     private SeatRepository seatRepository;
 
+    @Autowired
+    private TrainServiceClient trainServiceClient;
+
     @Transactional
     public Booking createBooking(BookingRequestDTO dto) {
+        // 0. Validate Train
+        try {
+            ApiResponse<TrainDTO> trainResponse = trainServiceClient.getTrainById(dto.getTrainId());
+            if (trainResponse == null || trainResponse.getData() == null) {
+                throw new TrainNotFoundException("Train with ID " + dto.getTrainId() + " not found.");
+            }
+        } catch (Exception e) {
+            throw new TrainNotFoundException("Error validating train: " + e.getMessage());
+        }
+
         // 1. Validate input (basic validation, can be extended)
         if (dto.getTotalPassengers() == null || dto.getTotalPassengers() <= 0) {
             throw new IllegalArgumentException(

@@ -1,143 +1,46 @@
 package com.tcs.food.model;
 
-import jakarta.persistence.Column;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "food_orders")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FoodOrder {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long orderId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false, unique = true)
-  private String orderNumber;
+    // To link with the booking microservice
+    private Long bookingId; 
 
-  @Column(nullable = false)
-  private Long customerId;
+    private Long customerId;
 
-  @Column(nullable = false)
-  private String pnr;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    private List<OrderItem> orderItems;
 
-  @Column(nullable = false)
-  private String seatNumber;
+    private Double totalAmount;
 
-  @Column(nullable = false)
-  private Long trainId;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
-  @Column(nullable = false)
-  private BigDecimal totalAmount;
+    private LocalDateTime orderDate;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private OrderStatus status = OrderStatus.PLACED;
-
-  @Column(nullable = false)
-  private LocalDateTime orderTime;
-
-  @Column
-  private LocalDateTime deliveryTime;
-
-  @Column
-  private String specialInstructions;
-
-  public FoodOrder() {}
-
-  // Getters and setters
-  public Long getOrderId() {
-    return orderId;
-  }
-
-  public void setOrderId(Long orderId) {
-    this.orderId = orderId;
-  }
-
-  public String getOrderNumber() {
-    return orderNumber;
-  }
-
-  public void setOrderNumber(String orderNumber) {
-    this.orderNumber = orderNumber;
-  }
-
-  public Long getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(Long customerId) {
-    this.customerId = customerId;
-  }
-
-  public String getPnr() {
-    return pnr;
-  }
-
-  public void setPnr(String pnr) {
-    this.pnr = pnr;
-  }
-
-  public String getSeatNumber() {
-    return seatNumber;
-  }
-
-  public void setSeatNumber(String seatNumber) {
-    this.seatNumber = seatNumber;
-  }
-
-  public Long getTrainId() {
-    return trainId;
-  }
-
-  public void setTrainId(Long trainId) {
-    this.trainId = trainId;
-  }
-
-  public BigDecimal getTotalAmount() {
-    return totalAmount;
-  }
-
-  public void setTotalAmount(BigDecimal totalAmount) {
-    this.totalAmount = totalAmount;
-  }
-
-  public OrderStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(OrderStatus status) {
-    this.status = status;
-  }
-
-  public LocalDateTime getOrderTime() {
-    return orderTime;
-  }
-
-  public void setOrderTime(LocalDateTime orderTime) {
-    this.orderTime = orderTime;
-  }
-
-  public LocalDateTime getDeliveryTime() {
-    return deliveryTime;
-  }
-
-  public void setDeliveryTime(LocalDateTime deliveryTime) {
-    this.deliveryTime = deliveryTime;
-  }
-
-  public String getSpecialInstructions() {
-    return specialInstructions;
-  }
-
-  public void setSpecialInstructions(String specialInstructions) {
-    this.specialInstructions = specialInstructions;
-  }
+    private LocalDateTime estimatedDeliveryTime;
 }

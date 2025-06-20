@@ -1,157 +1,81 @@
-# Food & Pantry Service API Documentation
+# Food Service API Documentation
 
-Base URL: `/api`
+This document provides details about the API endpoints available in the Food microservice.
 
-## Food Menu
+## 1. Food Item Endpoints
 
-### Get All Food Items
+Base Path: `/api/food/items`
 
-- **GET** `/food_cart`
-- **Response:** 200 OK
+### 1.1. Get Available Food Items
 
-```
-[
+- **Endpoint:** `GET /`
+- **Description:** Retrieves a list of all food items that are currently available for ordering.
+- **Responses:**
+  - `200 OK`: Returns a list of `FoodItem` objects.
+
+### 1.2. Add a New Food Item
+
+- **Endpoint:** `POST /`
+- **Description:** Adds a new food item to the menu. This is typically an admin-only operation.
+- **Request Body:** `FoodItem`
+  ```json
   {
-    "foodItemId": 1,
-    "itemName": "Paneer Tikka",
-    "description": "Spicy grilled paneer cubes",
-    "category": "SNACKS",
-    "price": 120.0,
-    "imageUrl": "http://...",
-    "isVegetarian": true,
-    "isAvailable": true,
-    "preparationTime": 15
-  },
-  ...
-]
-```
+    "name": "Samosa",
+    "description": "A fried pastry with a savory filling, including ingredients such as spiced potatoes, onions, and peas.",
+    "price": 50.0,
+    "available": true
+  }
+  ```
+- **Responses:**
+  - `200 OK`: Returns the newly created `FoodItem` object.
 
-### Get Food Items for Specific Train
+---
 
-- **GET** `/food_cart/{trainId}`
-- **Response:** 200 OK (same as above)
+## 2. Food Order Endpoints
 
-### Add New Food Item (Admin)
+Base Path: `/api/food/orders`
 
-- **POST** `/food_cart/admin/food_items`
-- **Request Body:**
+### 2.1. Place a Food Order
 
-```
-{
-  "itemName": "Paneer Tikka",
-  "description": "Spicy grilled paneer cubes",
-  "category": "SNACKS",
-  "price": 120.0,
-  "imageUrl": "http://...",
-  "isVegetarian": true,
-  "isAvailable": true,
-  "preparationTime": 15
-}
-```
+- **Endpoint:** `POST /`
+- **Description:** Places a new food order for a passenger with a valid, upcoming train booking.
+- **Request Body:** `FoodOrderRequestDTO`
+  ```json
+  {
+    "customerId": 1,
+    "bookingId": 123,
+    "items": [
+      {
+        "foodItemId": 1,
+        "quantity": 2
+      },
+      {
+        "foodItemId": 3,
+        "quantity": 1
+      }
+    ]
+  }
+  ```
+- **Responses:**
+  - `200 OK`: Returns a `FoodOrderResponseDTO` with the details of the newly created order.
+  - `400 Bad Request`: If the booking ID is invalid, the booking is not confirmed, or the travel date is in the past.
+  - `404 Not Found`: If a specified food item is not found or is unavailable.
 
-- **Response:** 201 Created (returns created item)
+### 2.2. Get Order by ID
 
-### Update Food Item (Admin)
+- **Endpoint:** `GET /{orderId}`
+- **Description:** Retrieves the details of a specific food order by its ID.
+- **Path Variable:**
+  - `orderId` (Long): The unique identifier of the food order.
+- **Responses:**
+  - `200 OK`: Returns a `FoodOrderResponseDTO`.
+  - `404 Not Found`: If no order is found with the given ID.
 
-- **PUT** `/food_cart/admin/food_items/{itemId}`
-- **Request Body:** (same as above)
-- **Response:** 200 OK (returns updated item)
+### 2.3. Get Order History for a Customer
 
-### Delete Food Item (Admin)
-
-- **DELETE** `/food_cart/admin/food_items/{itemId}`
-- **Response:** 204 No Content
-
-## Food Orders
-
-### Place Food Order
-
-- **POST** `/food_order`
-- **Request Body:**
-
-```
-{
-  "orderNumber": "ORD123456",
-  "customerId": 1,
-  "pnr": "PNR123",
-  "seatNumber": "A1-12",
-  "trainId": 101,
-  "totalAmount": 250.0,
-  "specialInstructions": "Less spicy"
-}
-```
-
-- **Response:** 201 Created (returns created order)
-
-### Get Order Details
-
-- **GET** `/food_order/{orderId}`
-- **Response:** 200 OK (returns order details)
-
-### Cancel Food Order
-
-- **PUT** `/food_order/{orderId}/cancel`
-- **Response:** 204 No Content
-
-### Get Customer's Food Orders
-
-- **GET** `/food_order/customer/{customerId}`
-- **Response:** 200 OK (returns list of orders)
-
-## Pantry Management (Admin)
-
-### Add Pantry
-
-- **POST** `/admin/pantry`
-- **Request Body:**
-
-```
-{
-  "trainId": 101,
-  "pantryName": "Main Pantry",
-  "contactNumber": "9876543210",
-  "isActive": true,
-  "serviceStartTime": "07:00:00",
-  "serviceEndTime": "22:00:00"
-}
-```
-
-- **Response:** 201 Created (returns created pantry)
-
-### Get All Pantries
-
-- **GET** `/admin/pantries`
-- **Response:** 200 OK (returns list of pantries)
-
-### Update Food Inventory
-
-- **PUT** `/admin/inventory`
-- **Request Body:**
-
-```
-{
-  "pantryId": 1,
-  "foodItemId": 2,
-  "availableQuantity": 50,
-  "inventoryDate": "2024-06-01",
-  "lastUpdated": "2024-06-01T10:00:00"
-}
-```
-
-- **Response:** 200 OK (returns updated inventory)
-
-### Get Pantry by ID
-
-- **GET** `/admin/pantry/{id}`
-- **Response:** 200 OK (returns pantry details) or 404 Not Found
-
-### Get Food Inventory by Pantry
-
-- **GET** `/food_order/inventory/{pantryId}`
-- **Response:** 200 OK (returns list of inventory items)
-
-## Error Codes
-
-- 400 Bad Request: Invalid input or order
-- 404 Not Found: Resource not found
-- 500 Internal Server Error: Unexpected error
+- **Endpoint:** `GET /history/{customerId}`
+- **Description:** Retrieves the entire food order history for a specific customer.
+- **Path Variable:**
+  - `customerId` (Long): The unique identifier of the customer.
+- **Responses:**
+  - `200 OK`: Returns a list of `FoodOrderResponseDTO` objects.
